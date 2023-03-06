@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using CarControlls.Models;
+using DieptidiUtility;
 using Rage;
 
 namespace CarControlls
@@ -48,7 +49,7 @@ namespace CarControlls
                         Kendaraan kendaraan = JsonConvert.DeserializeObject<Kendaraan>(File.ReadAllText(fileList[i]));
                         kendaraans.Add(kendaraan);
                         vehicles.Add(kendaraan.Spawn());
-                        blips.Add(Temp.CreateBlip(kendaraan.Position.X, kendaraan.Position.Y, kendaraan.Position.Z,
+                        blips.Add(Helper.CreateBlip(kendaraan.Position.ToVector3(),
                             $"{kendaraan.ModelName}-{kendaraan.LicensePlate}", Color.PeachPuff, BlipSprite.GangVehicle));
                     }
                 }
