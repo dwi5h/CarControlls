@@ -48,6 +48,7 @@ namespace CarControlls
             if (Game.LocalPlayer.Character.IsOnFoot && fontEntity != null && fontEntity is Vehicle)
             {
                 Vehicle vehicleOnFront = (Vehicle)fontEntity;
+                GameFiber.StartNew(() => BlinkingLight(vehicleOnFront));
                 if (vehicleOnFront.LockStatus == VehicleLockStatus.Locked)
                 {
                     Unlocking(vehicleOnFront);
@@ -57,6 +58,18 @@ namespace CarControlls
                 Locking(vehicleOnFront);
                 return;
             }
+        }
+
+        static void BlinkingLight(Vehicle vehicle)
+        {
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 2);
+            GameFiber.Yield();
+            GameFiber.Wait(200);
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 0);
+            GameFiber.Wait(200);
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 2);
+            GameFiber.Wait(400);
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 0);
         }
 
         static void Unlocking(Vehicle vehicle)
