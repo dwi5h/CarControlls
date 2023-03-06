@@ -59,7 +59,7 @@
     <Compile Include="Models\KendaraanMod.cs" />
     <Compile Include="Models\SimpleVector3.cs" />
     <Compile Include="StorageController.cs" />
-    <Compile Include="EntryPoint.cs" />
+    <Compile Include="CarControllEntryPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

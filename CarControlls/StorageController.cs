@@ -14,7 +14,7 @@ namespace CarControlls
 {
     class StorageController
     {
-        static readonly string DirLocation = Directory.GetCurrentDirectory() + @"\plugins\CarControlls";
+        static readonly string DirLocation = Directory.GetCurrentDirectory() + @"\plugins\DieptidiMenu\CarControlls";
 
         public static void SaveVehicle(Kendaraan kendaraan)
         {

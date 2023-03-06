@@ -9,11 +9,11 @@ using CarControlls.Models;
 using DieptidiUtility;
 using Rage;
 
-[assembly: Rage.Attributes.Plugin("CarControlls", Description = "Car Controlling System", Author = "Dieptidi",
-    EntryPoint = "CarControlls.EntryPoint.Main", ExitPoint = "CarControlls.EntryPoint.OnUnload")]
+//[assembly: Rage.Attributes.Plugin("CarControlls", Description = "Car Controlling System", Author = "Dieptidi",
+//    EntryPoint = "CarControlls.EntryPoint.Main", ExitPoint = "CarControlls.EntryPoint.OnUnload")]
 namespace CarControlls
 {
-    public class EntryPoint
+    public class CarControllEntryPoint
     {
         static List<Blip> vehicleBlips;
         static List<Kendaraan> kendaraans;
@@ -26,7 +26,7 @@ namespace CarControlls
             GameFiber.StartNew(() => Helper.RequestAnimDict(carLockDictionaryAnimation));
         }
 
-        private static void OnUnload(bool isTerminating)
+        public static void OnUnload(bool isTerminating)
         {
             if (isTerminating)
             {
