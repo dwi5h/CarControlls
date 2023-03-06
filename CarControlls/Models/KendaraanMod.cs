@@ -2,7 +2,7 @@
 
 namespace CarControlls.Models
 {
-    class KendaraanMod
+    public class KendaraanMod
     {
         public int Type { get; set; }
 

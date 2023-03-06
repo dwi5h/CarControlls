@@ -12,9 +12,10 @@ using Rage;
 
 namespace CarControlls
 {
-    class StorageController
+    public class StorageController
     {
         static readonly string DirLocation = Directory.GetCurrentDirectory() + @"\plugins\DieptidiMenu\CarControlls";
+        internal static readonly string DirVehicleLocation = DirLocation + @"\Vehicle";
 
         public static void SaveVehicle(Kendaraan kendaraan)
         {
@@ -22,8 +23,8 @@ namespace CarControlls
 
             try
             {
-                File.WriteAllText(Path.Combine(DirLocation + @"\Kendaraan", GetVehicleFileName(kendaraan)), serializedVehicle, Encoding.UTF8);
-                var vehicleFilePath = Path.Combine(DirLocation + @"\Kendaraan", GetVehicleFileNameDelete(kendaraan));
+                File.WriteAllText(Path.Combine(DirVehicleLocation, GetVehicleFileName(kendaraan)), serializedVehicle, Encoding.UTF8);
+                var vehicleFilePath = Path.Combine(DirVehicleLocation, GetVehicleFileNameDelete(kendaraan));
                 File.Delete(vehicleFilePath);
             }
             catch (Exception e)
@@ -34,7 +35,7 @@ namespace CarControlls
 
         public static List<Kendaraan> LoadAllKendaraan(out List<Vehicle> vehicles, out List<Blip> blips)
         {
-            string[] fileList = Directory.GetFiles(DirLocation + @"\Kendaraan", "*.json");
+            string[] fileList = Directory.GetFiles(DirVehicleLocation, "*.json");
 
             List<Kendaraan> kendaraans = new List<Kendaraan>();
             vehicles = new List<Vehicle>();
@@ -64,7 +65,7 @@ namespace CarControlls
 
         public static void DeleteVehicle(Kendaraan vehicle)
         {
-            var vehicleFilePath = Path.Combine(DirLocation + @"\Kendaraan", GetVehicleFileName(vehicle));
+            var vehicleFilePath = Path.Combine(DirVehicleLocation, GetVehicleFileName(vehicle));
 
             if (!File.Exists(vehicleFilePath))
                 return;
@@ -73,7 +74,7 @@ namespace CarControlls
             {
                 File.Delete(vehicleFilePath);
                 var serializedVehicle = JsonConvert.SerializeObject(vehicle, Formatting.Indented);
-                File.WriteAllText(Path.Combine(DirLocation + @"\Kendaraan", GetVehicleFileNameDelete(vehicle)), serializedVehicle, Encoding.UTF8);
+                File.WriteAllText(Path.Combine(DirVehicleLocation, GetVehicleFileNameDelete(vehicle)), serializedVehicle, Encoding.UTF8);
             }
             catch (Exception e)
             {
@@ -83,7 +84,7 @@ namespace CarControlls
 
         public static bool IsPlayerVehicle(Vehicle vehicle)
         {
-            var vehicleFilePath = Path.Combine(DirLocation + @"\Kendaraan", GetVehicleFileName(vehicle));
+            var vehicleFilePath = Path.Combine(DirVehicleLocation, GetVehicleFileName(vehicle));
 
             if (!File.Exists(vehicleFilePath))
                 return false;

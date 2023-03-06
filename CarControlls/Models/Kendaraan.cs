@@ -7,7 +7,7 @@ using System;
 
 namespace CarControlls.Models
 {
-    class Kendaraan
+    public class Kendaraan
     {
         public VehicleWheelType wheelType;
         public int wheelModIndex;
