@@ -4,6 +4,7 @@ using System.Linq;
 using System.Drawing;
 using Rage;
 using System;
+using System.IO;
 
 namespace CarControlls.Models
 {
@@ -25,10 +26,10 @@ namespace CarControlls.Models
         public float FuelLevel { get; set; }
         public VehicleClass Class { get; set; }
         public VehicleConvertibleRoofState ConvertibleRoofState { get; set; }
-        public Color PrimaryColor { get; set; }
-        public Color SecondaryColor { get; set; }
-        public Color PearlescentColor { get; set; }
-        public Color RimColor { get; set; }
+        public int PrimaryColor { get; set; }
+        public int SecondaryColor { get; set; }
+        public int PearlescentColor { get; set; }
+        public int RimColor { get; set; }
         public Color TrimColor { get; set; }
         public int WindowTint { get; set; }
         public List<KendaraanMod> Mods { get; set; }
@@ -55,11 +56,13 @@ namespace CarControlls.Models
             Class = vehicle.Class;
             ConvertibleRoofState = vehicle.ConvertibleRoofState;
             CanTiresBurst = vehicle.CanTiresBurst;
-            PrimaryColor = vehicle.PrimaryColor;
-            SecondaryColor = vehicle.SecondaryColor;
-            PearlescentColor = vehicle.PearlescentColor;
-            RimColor = vehicle.RimColor;
+            PrimaryColor = GetPrimaryColor(vehicle);
+            SecondaryColor = GetSecondaryColor(vehicle);
+            PearlescentColor = GetPearlescent(vehicle);
+            RimColor = GetRim(vehicle);
+
             WindowTint = Rage.Native.NativeFunction.CallByName<int>("GET_VEHICLE_WINDOW_TINT", vehicle);
+            //GetSecondaryColor(vehicle);
 
             Mods = GetMods(vehicle);
         }
@@ -78,21 +81,74 @@ namespace CarControlls.Models
             vehicle.CanTiresBurst = CanTiresBurst;
             vehicle.LicensePlate = LicensePlate;
             vehicle.LicensePlateStyle = LicensePlateStyle;
-            vehicle.PrimaryColor = PrimaryColor;
-            vehicle.SecondaryColor = SecondaryColor;
-            vehicle.PearlescentColor = PearlescentColor;
-            vehicle.RimColor = RimColor;
             Rage.Native.NativeFunction.CallByName<int>("SET_VEHICLE_WINDOW_TINT", vehicle, WindowTint);
             vehicle.Mods.InstallModKit();
 
+            SetPrimarySecondaryColor(vehicle);
+            SetPearlescentRim(vehicle);
             vehicle.Mods.SetWheelMod(wheelType, wheelModIndex, false);
             foreach (var myMod in Mods)
             {
                 Rage.Native.NativeFunction.Natives.SET_VEHICLE_MOD(vehicle, myMod.Type, myMod.Index, false);
             }
-            //}
-            //}
+
             return vehicle;
+        }
+
+        int GetPearlescent(Vehicle vehicle)
+        {
+            int color1 = 0, color2;
+            unsafe
+            {
+                Rage.Native.NativeFunction.CallByName<bool>("GET_VEHICLE_EXTRA_COLOURS", vehicle, &color1, &color2);
+            }
+            return color1;
+        }
+
+        int GetRim(Vehicle vehicle)
+        {
+            int color1, color2 = 0;
+            unsafe
+            {
+                Rage.Native.NativeFunction.CallByName<bool>("GET_VEHICLE_EXTRA_COLOURS", vehicle, &color1, &color2);
+            }
+            return color2;
+        }
+
+        void SetPearlescentRim(Vehicle vehicle)
+        {
+            unsafe
+            {
+                Rage.Native.NativeFunction.Natives.SET_VEHICLE_EXTRA_COLOURS(vehicle, PearlescentColor, RimColor);
+            }
+        }
+
+        int GetPrimaryColor(Vehicle vehicle)
+        {
+            int color1 = 0, color2;
+            unsafe
+            {
+                Rage.Native.NativeFunction.CallByName<bool>("GET_VEHICLE_COLOURS", vehicle, &color1, &color2);
+            }
+            return color1;
+        }
+
+        int GetSecondaryColor(Vehicle vehicle)
+        {
+            int color1, color2 = 0;
+            unsafe
+            {
+                Rage.Native.NativeFunction.CallByName<bool>("GET_VEHICLE_COLOURS", vehicle, &color1, &color2);
+            }
+            return color2;
+        }
+
+        void SetPrimarySecondaryColor(Vehicle vehicle)
+        {
+            unsafe
+            {
+                Rage.Native.NativeFunction.Natives.SET_VEHICLE_COLOURS(vehicle, PrimaryColor, SecondaryColor);
+            }
         }
 
         Tuple<string, int>[] VehicleModType =
