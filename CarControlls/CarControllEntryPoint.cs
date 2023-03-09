@@ -43,6 +43,11 @@ namespace CarControlls
             }
         }
 
+        public void CloseAllDoor(Vehicle vehicle)
+        {
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_DOORS_SHUT(vehicle, true);
+        }
+
         void BlinkingLight(Vehicle vehicle)
         {
             Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 2);
@@ -55,7 +60,7 @@ namespace CarControlls
             Rage.Native.NativeFunction.Natives.SET_VEHICLE_LIGHTS(vehicle, 0);
         }
 
-        public void Unlocking(Vehicle vehicle)
+        void Unlocking(Vehicle vehicle)
         {
             var _blip = VehicleBlips.Find(b => b.Name == $"{vehicle.Model.Name}-{vehicle.LicensePlate}");
             if (_blip != null && StorageController.IsPlayerVehicle(vehicle))
