@@ -28,10 +28,10 @@ namespace CarControlls
 
         public void StartVehicleLockingSystem()
         {
-            Entity fontEntity = Helper.GetEntityInFrontPlayer();
-            if (Game.LocalPlayer.Character.IsOnFoot && fontEntity != null && fontEntity is Vehicle)
+            Entity frontEntity = Helper.GetEntityInFrontPlayer();
+            if (Game.LocalPlayer.Character.IsOnFoot && frontEntity != null && frontEntity is Vehicle)
             {
-                Vehicle vehicleOnFront = (Vehicle)fontEntity;
+                Vehicle vehicleOnFront = (Vehicle)frontEntity;
                 if (vehicleOnFront.LockStatus == VehicleLockStatus.Locked)
                 {
                     Unlocking(vehicleOnFront);
@@ -43,9 +43,30 @@ namespace CarControlls
             }
         }
 
+        public string GetFuel()
+        {
+            Entity frontEntity = Helper.GetEntityInFrontPlayer();
+            if (frontEntity == null)
+            {
+                frontEntity = Game.LocalPlayer.Character.CurrentVehicle;
+            }
+            if (frontEntity != null && frontEntity is Vehicle)
+            {
+                Vehicle vehicleOnFront = (Vehicle)frontEntity;
+                return "Fuel: " + Math.Floor((decimal)vehicleOnFront.FuelLevel).ToString();
+            }
+
+            return "Fuel: ~";
+        }
+
+        public void TurnEngine(Vehicle vehicle, bool isOn)
+        {
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_ENGINE_ON(vehicle, isOn, false, true);
+        }
+
         public void CloseAllDoor(Vehicle vehicle)
         {
-            Rage.Native.NativeFunction.Natives.SET_VEHICLE_DOORS_SHUT(vehicle, true);
+            Rage.Native.NativeFunction.Natives.SET_VEHICLE_DOORS_SHUT(vehicle, false);
         }
 
         void BlinkingLight(Vehicle vehicle)
