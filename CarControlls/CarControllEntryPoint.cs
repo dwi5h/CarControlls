@@ -20,26 +20,33 @@ namespace CarControlls
         public readonly string carLockDictionaryAnimation = "anim@mp_player_intmenu@key_fob@";
         public readonly string carLockActionAnimation = "fob_click_fp";
 
-        public CarControllEntryPoint() 
+        public CarControllEntryPoint()
         {
-            if(!Directory.Exists(StorageController.DirVehicleLocation))
+            if (!Directory.Exists(StorageController.DirVehicleLocation))
                 Directory.CreateDirectory(StorageController.DirVehicleLocation);
         }
 
         public void StartVehicleLockingSystem()
         {
-            Entity frontEntity = Helper.GetEntityInFrontPlayer();
-            if (Game.LocalPlayer.Character.IsOnFoot && frontEntity != null && frontEntity is Vehicle)
+            try
             {
-                Vehicle vehicleOnFront = (Vehicle)frontEntity;
-                if (vehicleOnFront.LockStatus == VehicleLockStatus.Locked)
+                Entity frontEntity = Helper.GetEntityInFrontPlayer();
+                if (Game.LocalPlayer.Character.IsOnFoot && frontEntity != null && frontEntity is Vehicle)
                 {
-                    Unlocking(vehicleOnFront);
+                    Vehicle vehicleOnFront = (Vehicle)frontEntity;
+                    if (vehicleOnFront.LockStatus == VehicleLockStatus.Locked)
+                    {
+                        Unlocking(vehicleOnFront);
+                        return;
+                    }
+
+                    Locking(vehicleOnFront);
                     return;
                 }
-
-                Locking(vehicleOnFront);
-                return;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -98,10 +105,30 @@ namespace CarControlls
             if (Helper.IsLastVehicleExist() && Helper.IsThisVehicleAreLastVehicle(vehicle))
             {
                 AddVehicleBlip(vehicle);
-                if (!Vehicles.Any(v => v.LicensePlate == vehicle.LicensePlate)) Vehicles.Add(vehicle);
+                if (!Vehicles.Any(v => v.IsValid() && v.LicensePlate == vehicle.LicensePlate)) Vehicles.Add(vehicle);
 
                 vehicle.LockStatus = VehicleLockStatus.Locked;
                 VehicleLockingFinishing("Locked", vehicle, (k) => StorageController.SaveVehicle(k));
+            }
+        }
+        public void ReSpawnSavedVehicle()
+        {
+            if (Vehicles.Any(v => v.IsValid() == false))
+            {
+                foreach (var veh in Vehicles)
+                {
+                    if (veh.IsValid() == true)
+                    {
+                        veh.Delete();
+                    }
+                }
+
+                Vehicles.Clear();
+
+                foreach (var ken in Kendaraans)
+                {
+                    Vehicles.Add(ken.Spawn());
+                }
             }
         }
 
