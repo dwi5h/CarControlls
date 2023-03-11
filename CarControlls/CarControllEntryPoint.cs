@@ -105,7 +105,12 @@ namespace CarControlls
             if (Helper.IsLastVehicleExist() && Helper.IsThisVehicleAreLastVehicle(vehicle))
             {
                 AddVehicleBlip(vehicle);
-                if (!Vehicles.Any(v => v.IsValid() && v.LicensePlate == vehicle.LicensePlate)) Vehicles.Add(vehicle);
+                var validVehicles = Vehicles.FindAll(v => v.IsValid());
+                if (validVehicles.Count() != Vehicles.Count())
+                {
+                    Vehicles.RemoveAll(v => !v.IsValid());
+                }
+                if (!validVehicles.Any(v => v.LicensePlate == vehicle.LicensePlate)) Vehicles.Add(vehicle);
 
                 vehicle.LockStatus = VehicleLockStatus.Locked;
                 VehicleLockingFinishing("Locked", vehicle, (k) => StorageController.SaveVehicle(k));
